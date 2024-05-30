@@ -19,14 +19,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message'])) {
     $message = $_POST['message'];
     $recipient_id = $_POST['recipient'] ?? NULL;
 
-    $stmt = $conn->prepare("INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, ?, ?)");
-    $stmt->bind_param("iis", $user['id'], $recipient_id, $message);
+    if ($isTeacher) {
+        // Nauczyciel wysyła wiadomość
+        $stmt = $conn->prepare("INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, ?, ?)");
+        $stmt->bind_param("iis", $user['id'], $recipient_id, $message);
+    } else {
+        // Rodzic może wysłać tylko do nauczyciela (recipient_id jest NULL dla publicznych wiadomości)
+        $teacher_id_res = $conn->query("SELECT id FROM users WHERE role='teacher' LIMIT 1");
+        if ($teacher_id_res->num_rows == 1) {
+            $teacher_id = $teacher_id_res->fetch_assoc()['id'];
+            $stmt = $conn->prepare("INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, ?, ?)");
+            $stmt->bind_param("iis", $user['id'], $teacher_id, $message);
+        }
+    }
     $stmt->execute();
     $stmt->close();
 }
 
 // Pobranie wiadomości
-$result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id ORDER BY m.timestamp DESC");
+if ($isTeacher) {
+    // Nauczyciel widzi wszystkie wiadomości
+    $result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id ORDER BY m.timestamp DESC");
+} else {
+    // Rodzic widzi wiadomości skierowane do niego oraz publiczne (recipient_id IS NULL)
+    $user_id = $user['id'];
+    $result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.recipient_id IS NULL OR m.recipient_id = $user_id ORDER BY m.timestamp DESC");
+}
 $messages = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
