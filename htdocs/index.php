@@ -44,5 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
             <button type="submit" name="login">Zaloguj</button>
         </form>
     </div>
+    <script src="js/script.js"></script>
 </body>
 </html>

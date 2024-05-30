@@ -73,5 +73,6 @@ $messages = $result->fetch_all(MYSQLI_ASSOC);
             </form>
         </div>
     </div>
+    <script src="js/script.js"></script>
 </body>
 </html>
