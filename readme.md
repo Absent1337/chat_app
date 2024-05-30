@@ -26,7 +26,7 @@
 
 2. **Import bazy danych**:
     - Uruchom `phpMyAdmin` przez przeglądarkę (np. wchodząc na `http://localhost/phpmyadmin`).
-    - Stwórz nową bazę danych, np. `komunikacja_rodzice_wychowawczyni`.
+    - Stwórz nową bazę danych, np. `chat_db`.
     - Zaimportuj plik `baza_danych.sql` do stworzonej bazy danych.
 
 3. **Uruchomienie aplikacji**:
