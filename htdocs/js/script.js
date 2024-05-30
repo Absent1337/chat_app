@@ -17,3 +17,11 @@ document.querySelector('.send-message form').addEventListener('submit', function
         alert("Proszę wpisać wiadomość.");
     }
 });
+
+// Czyszczenie wiadomości na ekranie
+document.getElementById('clear-messages').addEventListener('click', function () {
+    var messagesDiv = document.querySelector('.messages');
+    while (messagesDiv.firstChild) {
+        messagesDiv.removeChild(messagesDiv.firstChild);
+    }
+});
