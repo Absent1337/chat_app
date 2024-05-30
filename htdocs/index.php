@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "komunikacja_rodzice_wychowawczyni");
+$conn = new mysqli("localhost", "root", "", "chat_db");
 
 // Sprawdzenie połączenia
 if ($conn->connect_error) {

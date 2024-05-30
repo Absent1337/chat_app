@@ -5,7 +5,7 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-$conn = new mysqli("localhost", "root", "", "komunikacja_rodzice_wychowawczyni");
+$conn = new mysqli("localhost", "root", "", "chat_db");
 
 if ($conn->connect_error) {
     die("Połączenie z bazą danych nieudane: " . $conn->connect_error);
