@@ -20,5 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Run deployment script
-        run: .\deploy_to_xampp.bat
+      - name: Move directory
+        run: |
+          move "${{ env.SOURCE_PATH }}" "${{ env.DEST_PATH }}"
