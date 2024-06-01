@@ -5,7 +5,7 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-$conn = new mysqli("localhost", "root", "", "komunikacja_rodzice_wychowawczyni");
+$conn = new mysqli("localhost", "root", "", "chat_db");
 
 if ($conn->connect_error) {
     die("Połączenie z bazą danych nieudane: " . $conn->connect_error);
@@ -36,10 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message'])) {
 
 // Pobranie wiadomości
 if ($isTeacher) {
+    // Nauczyciel widzi wszystkie wiadomości
     $result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id ORDER BY m.timestamp DESC");
 } else {
+    // Rodzic widzi wiadomości wysłane przez nauczyciela do niego, publiczne wiadomości, oraz wiadomości wysłane przez niego samego
     $user_id = $user['id'];
-    $result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.recipient_id IS NULL OR m.recipient_id = $user_id ORDER BY m.timestamp DESC");
+    $result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.recipient_id IS NULL OR m.recipient_id = $user_id OR m.sender_id = $user_id ORDER BY m.timestamp DESC");
 }
 $messages = $result->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -57,15 +59,17 @@ $messages = $result->fetch_all(MYSQLI_ASSOC);
         <h2>Wiadomości</h2>
         <div class="messages">
             <?php foreach ($messages as $msg): ?>
-                <div class="message">
+                <div class="message" id="message-<?php echo $index; ?>">
                     <strong><?php echo $msg['sender']; ?>:</strong>
                     <p><?php echo $msg['message']; ?></p>
                     <small><?php echo $msg['timestamp']; ?></small>
                     <hr>
+                    <button class="toggle-message" data-id="message-<?php echo $index; ?>">Zwiń</button>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
-        </div>
         <button id="clear-messages">Wyczyść</button>
+        
         <div class="send-message">
             <h3>Wyślij wiadomość</h3>
             <form method="POST" action="messages.php">
