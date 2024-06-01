@@ -30,14 +30,21 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             var msgId = this.getAttribute('data-id');
             var messageDiv = document.getElementById(msgId);
-            var messageContent = messageDiv.querySelector('p');
-    
-            if (messageContent.style.display === 'none' || messageContent.style.display === '') {
-                messageContent.style.display = 'block';
-                this.textContent = 'Zwiń';
-            } else {
-                messageContent.style.display = 'none';
-                this.textContent = 'Rozwiń';
+            if (messageDiv) {
+                var messageContent = messageDiv.querySelector('p');
+                var smallContent = messageDiv.querySelector('small');
+            
+                if (messageContent && smallContent) {
+                    if (messageContent.style.display === 'none' || messageContent.style.display === '') {
+                        messageContent.style.display = 'block';
+                        smallContent.style.display = 'block';
+                        this.textContent = 'Zwiń';
+                    } else {
+                        messageContent.style.display = 'none';
+                        smallContent.style.display = 'none';
+                        this.textContent = 'Rozwiń';
+                    }
+                }
             }
         });
     });
