@@ -22,4 +22,4 @@ jobs:
 
       - name: Move directory
         run: |
-          move "${{ env.SOURCE_PATH }}" "${{ env.DEST_PATH }}"
+          xcopy /E /I "${{ env.SOURCE_PATH }}" "${{ env.DESTINATION_PATH }}"
