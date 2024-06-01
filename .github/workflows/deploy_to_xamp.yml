@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    environment: local
 
     steps:
       - name: powershell allow...
@@ -20,6 +21,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Move directory
+      - name: Copy directory
         run: |
-          xcopy /E /I "${{ env.SOURCE_PATH }}" "${{ env.DESTINATION_PATH }}"
+          xcopy /E /I "${{ github.workspace }}" "${{ env.DESTINATION_PATH }}"
