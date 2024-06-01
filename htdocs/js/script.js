@@ -25,6 +25,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Czysczenie wiadmości na ekranie
+    document.getElementById('clear-messages').addEventListener('click', function () {
+        var messagesDiv = document.querySelector('.messages');
+        while (messagesDiv.firstChild) {
+            messagesDiv.removeChild(messagesDiv.firstChild);
+        }
+    });
+
     // Zwijanie/rozwijanie wiadomości
     document.querySelectorAll('.toggle-message').forEach(function(button) {
         button.addEventListener('click', function() {
@@ -33,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (messageDiv) {
                 var messageContent = messageDiv.querySelector('p');
                 var smallContent = messageDiv.querySelector('small');
-            
+
                 if (messageContent && smallContent) {
                     if (messageContent.style.display === 'none' || messageContent.style.display === '') {
                         messageContent.style.display = 'block';
