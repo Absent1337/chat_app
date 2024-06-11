@@ -14,14 +14,30 @@ if ($conn->connect_error) {
 $user = $_SESSION['user'];
 $isTeacher = $user['role'] === 'teacher';
 
+// Handle message deletion if teacher requests it
+if ($isTeacher && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_messages'])) {
+    $conn->query("DELETE FROM messages");
+}
+
 // Obsługa wysyłania wiadomości
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message'])) {
     $message = $_POST['message'];
     $recipient_id = $_POST['recipient'] ?? NULL;
 
     if ($isTeacher) {
-        $stmt = $conn->prepare("INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, ?, ?)");
-        $stmt->bind_param("iis", $user['id'], $recipient_id, $message);
+        if ($recipient_id) {
+            // Check if the recipient exists
+            $res = $conn->query("SELECT id FROM users WHERE id = $recipient_id LIMIT 1");
+            if ($res->num_rows === 0) {
+                die("Recipient does not exist.");
+            }
+            $stmt = $conn->prepare("INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, ?, ?)");
+            $stmt->bind_param("iis", $user['id'], $recipient_id, $message);
+        } else {
+            // Handle message for all recipients (NULL)
+            $stmt = $conn->prepare("INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, NULL, ?)");
+            $stmt->bind_param("is", $user['id'], $message);
+        }
     } else {
         $teacher_id_res = $conn->query("SELECT id FROM users WHERE role='teacher' LIMIT 1");
         if ($teacher_id_res->num_rows == 1) {
@@ -34,12 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message'])) {
     $stmt->close();
 }
 
-// Pobranie wiadomości
+// Fetch messages after any potential deletion
 if ($isTeacher) {
-    // Nauczyciel widzi wszystkie wiadomości
     $result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id ORDER BY m.timestamp DESC");
 } else {
-    // Rodzic widzi wiadomości wysłane przez nauczyciela do niego, publiczne wiadomości, oraz wiadomości wysłane przez niego samego
     $user_id = $user['id'];
     $result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.recipient_id IS NULL OR m.recipient_id = $user_id OR m.sender_id = $user_id ORDER BY m.timestamp DESC");
 }
@@ -55,23 +69,30 @@ $messages = $result->fetch_all(MYSQLI_ASSOC);
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="user-info">
-        <p>Witaj <strong><?php echo $user['username']; ?></strong></p>
-    </div>
     <div class="messages-container">
-    <div class="messages-container">
+        <div class="user-info">
+            <p>Witaj <strong><?php echo htmlspecialchars($user['username']); ?></strong></p>
+        </div>
         <h2>Wiadomości</h2>
         <div class="messages">
-            <?php foreach ($messages as $msg): ?>
+            <?php foreach ($messages as $index => $msg): ?>
                 <div class="message" id="message-<?php echo $index; ?>">
-                    <strong><?php echo $msg['sender']; ?>:</strong>
-                    <p><?php echo $msg['message']; ?></p>
-                    <small><?php echo $msg['timestamp']; ?></small>
+                    <strong><?php echo htmlspecialchars($msg['sender']); ?>:</strong>
+                    <p><?php echo htmlspecialchars($msg['message']); ?></p>
+                    <small><?php echo htmlspecialchars($msg['timestamp']); ?></small>
                     <hr>
                     <button class="toggle-message" data-id="message-<?php echo $index; ?>">Zwiń</button>
-                    </div>
-                    <?php endforeach; ?>
                 </div>
+            <?php endforeach; ?>
+        </div>
+
+        <?php if ($isTeacher): ?>
+            <form method="POST" style="display: inline;">
+                <!-- 'Delete All' Button for Teacher -->
+                <button type="submit" name="delete_messages" onclick="return confirm('Are you sure you want to delete all messages?');">Usuń wszystkie wiadomości</button>
+            </form>
+        <?php endif; ?>
+
         <button id="clear-messages">Wyczyść</button>
         
         <div class="send-message">
@@ -84,7 +105,7 @@ $messages = $result->fetch_all(MYSQLI_ASSOC);
                         <?php
                         $users = $conn->query("SELECT * FROM users WHERE role='parent'");
                         while ($row = $users->fetch_assoc()) {
-                            echo "<option value=\"{$row['id']}\">{$row['username']}</option>";
+                            echo "<option value=\"{$row['id']}\">" . htmlspecialchars($row['username']) . "</option>";
                         }
                         ?>
                     </select>
