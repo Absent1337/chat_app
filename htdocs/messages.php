@@ -55,6 +55,10 @@ $messages = $result->fetch_all(MYSQLI_ASSOC);
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="user-info">
+        <p>Witaj <strong><?php echo $user['username']; ?></strong></p>
+    </div>
+    <div class="messages-container">
     <div class="messages-container">
         <h2>Wiadomości</h2>
         <div class="messages">
