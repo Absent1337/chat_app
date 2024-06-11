@@ -20,7 +20,6 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          path: ${{ env.DESTINATION_PATH }} # Path to XAMPP htdocs folder
 
-      - name: Copy directory
-        run: |
-          xcopy /E /I "${{ github.workspace }}" "${{ env.DESTINATION_PATH }}"
