@@ -26,6 +26,10 @@
 
 *Użytkownicy mają możliwość tymczasowego "wyczyszczenia wiadomości", polegającego na ukryciu ich do czasu ponownego logowania*
 
+### Wylogowanie się
+
+*Użytkownicy mogą się wylogować przy użyciu przycisku*
+
 ## Instrukcja uruchomienia
 
 ### Wymagania
