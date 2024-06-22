@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 $user = $_SESSION['user'];
 $isTeacher = $user['role'] === 'teacher';
 
-// Handle message deletion if teacher requests it
+// Zajmij się usuwaniem wiadomości, jeśli nauczyciel o to poprosi
 if ($isTeacher && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_messages'])) {
     $conn->query("DELETE FROM messages");
 }
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message'])) {
 
     if ($isTeacher) {
         if ($recipient_id) {
-            // Check if the recipient exists
+            // Sprawdź, czy odbiorca istnieje
             $res = $conn->query("SELECT id FROM users WHERE id = $recipient_id LIMIT 1");
             if ($res->num_rows === 0) {
                 die("Recipient does not exist.");
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message'])) {
             $stmt = $conn->prepare("INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, ?, ?)");
             $stmt->bind_param("iis", $user['id'], $recipient_id, $message);
         } else {
-            // Handle message for all recipients (NULL)
+            // Obsługuj wiadomość dla wszystkich odbiorców (NULL)
             $stmt = $conn->prepare("INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, NULL, ?)");
             $stmt->bind_param("is", $user['id'], $message);
         }
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message'])) {
     $stmt->close();
 }
 
-// Fetch messages after any potential deletion
+// Pobieraj wiadomości po potencjalnym usunięciu
 if ($isTeacher) {
     $result = $conn->query("SELECT m.*, u.username as sender FROM messages m JOIN users u ON m.sender_id = u.id ORDER BY m.timestamp DESC");
 } else {
@@ -88,8 +88,8 @@ $messages = $result->fetch_all(MYSQLI_ASSOC);
 
         <?php if ($isTeacher): ?>
             <form method="POST" style="display: inline;">
-                <!-- 'Delete All' Button for Teacher -->
-                <button type="submit" name="delete_messages" onclick="return confirm('Are you sure you want to delete all messages?');">Usuń wszystkie wiadomości</button>
+                <!-- Przycisk „Usuń wszystko” dla nauczyciela -->
+                <button type="submit" name="delete_messages" onclick="return confirm('Czy na pewno chcesz usunąć wszystkie wiadomości?');">Usuń wszystkie wiadomości</button>
             </form>
         <?php endif; ?>
 

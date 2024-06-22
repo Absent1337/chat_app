@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Czysczenie wiadmości na ekranie
+    // Czyszczenie wiadmości na ekranie
     document.getElementById('clear-messages').addEventListener('click', function () {
         var messagesDiv = document.querySelector('.messages');
         while (messagesDiv.firstChild) {
