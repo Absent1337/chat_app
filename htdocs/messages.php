@@ -71,7 +71,10 @@ $messages = $result->fetch_all(MYSQLI_ASSOC);
 <body>
     <div class="messages-container">
         <div class="user-info">
-            <p>Witaj <strong><?php echo htmlspecialchars($user['username']); ?></strong></p>
+            <h1>Witaj <strong><?php echo htmlspecialchars($user['username']); ?></strong></h1>
+            <a href="logout.php" onclick="return confirm('Czy na pewno chesz się wylogować?');">
+                <button>Wyloguj</button>
+            </a>
         </div>
         <h2>Wiadomości</h2>
         <div class="messages">
