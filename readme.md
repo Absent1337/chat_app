@@ -22,6 +22,10 @@
 
 *Treść wiadomości może zostać zwinięta i następnie rozwinięta*
 
+### Czyszczenie wiadomości
+
+*Użytkownicy mają możliwość tymczasowego "wyczyszczenia wiadomości", polegającego na ukryciu ich do czasu ponownego logowania*
+
 ## Instrukcja uruchomienia
 
 ### Wymagania
