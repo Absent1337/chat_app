@@ -5,6 +5,12 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: index.php");
+    exit();
+}
+
 $conn = new mysqli("localhost", "root", "", "chat_db");
 
 if ($conn->connect_error) {
@@ -72,7 +78,7 @@ $messages = $result->fetch_all(MYSQLI_ASSOC);
     <div class="messages-container">
         <div class="user-info">
             <h1>Witaj <strong><?php echo htmlspecialchars($user['username']); ?></strong></h1>
-            <a href="logout.php" onclick="return confirm('Czy na pewno chesz się wylogować?');">
+            <a href="?logout=true" onclick="return confirm('Czy na pewno chesz się wylogować?');">
                 <button>Wyloguj</button>
             </a>
         </div>
