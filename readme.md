@@ -14,11 +14,11 @@
 
 *Formularz pozwala użytkownikowi na wpisanie wiadomości i wysłanie jej do wybranego odbiorcy (w przypadku nauczyciela) lub do wszystkich (w przypadku rodzica).*
 
-## Usuwanie wiadomości
+### Usuwanie wiadomości
 
 *Nauczyciel ma możliwość usunięcia wszystkich wiadomości*
 
-## Zwijanie wiadomości
+### Zwijanie wiadomości
 
 *Treść wiadomości może zostać zwinięta i następnie rozwinięta*
 
